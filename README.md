@@ -1,3 +1,9 @@
+## Updata by YongjingLi
+1. add ./scripts/segmentation/deploy_seg.py, to export deploy model and inference
+2. add ./scripts/segmentation/train_self.py, to test in my way
+3. add ./scripts/segmentation/train_self.py, to modify dataset and model input size, and custon train
+ 
+ 
 # Gluon CV Toolkit
 
 [![Build Status](http://ci.mxnet.io/buildStatus/icon?job=gluon-cv%2Fmaster)](http://ci.mxnet.io/job/gluon-cv/job/master/)
