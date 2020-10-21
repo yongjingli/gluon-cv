@@ -2,6 +2,9 @@
 1. add ./scripts/segmentation/deploy_seg.py, to export deploy model and inference
 2. add ./scripts/segmentation/train_self.py, to test in my way
 3. add ./scripts/segmentation/train_self.py, to modify dataset and model input size, and custon train
+4. add ./scripts/detection/yolo/demo_yolo_self.py, to show det result
+5. add ./scripts/detection/yolo/demo_yolo_save_model.py, to export model
+6. add ./scripts/detection/yolo/train_yolo3_self.py, to modify dataset and model input size, and custon train
  
  
 # Gluon CV Toolkit
