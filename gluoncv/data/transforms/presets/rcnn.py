@@ -1,4 +1,5 @@
 """Transforms for RCNN series."""
+# pylint: disable=not-callable
 from __future__ import absolute_import
 
 import copy
@@ -149,18 +150,29 @@ class FasterRCNNDefaultTrainTransform(object):
         self._max_size = max_size
         self._mean = mean
         self._std = std
+        self._box_norm = box_norm
         self._anchors = None
         self._multi_stage = multi_stage
         self._random_resize = isinstance(self._short, (tuple, list))
+        self._num_sample = num_sample
+        self._pos_iou_thresh = pos_iou_thresh
+        self._neg_iou_thresh = neg_iou_thresh
+        self._pos_ratio = pos_ratio
         self._flip_p = flip_p
+        self._internal_target_generator = None
+        self._net_none = False
+        self._kwargs = kwargs
         if net is None:
+            self._net_none = True
             return
 
         # use fake data to generate fixed anchors for target generation
         anchors = []  # [P2, P3, P4, P5]
         # in case network has reset_ctx to gpu
-        anchor_generator = copy.deepcopy(net.rpn.anchor_generator)
-        anchor_generator.collect_params().reset_ctx(None)
+        # anchor_generator = copy.deepcopy(net.rpn.anchor_generator)
+        anchor_generator = net.rpn.anchor_generator
+        old_ctx = list(anchor_generator.collect_params().values())[0].list_ctx()
+        anchor_generator.collect_params().reset_ctx(mx.cpu())
         if self._multi_stage:
             for ag in anchor_generator:
                 anchor = ag(mx.nd.zeros((1, 3, ashape, ashape))).reshape((1, 1, ashape, ashape, -1))
@@ -170,15 +182,25 @@ class FasterRCNNDefaultTrainTransform(object):
             anchors = anchor_generator(
                 mx.nd.zeros((1, 3, ashape, ashape))).reshape((1, 1, ashape, ashape, -1))
         self._anchors = anchors
+        anchor_generator.collect_params().reset_ctx(old_ctx)
         # record feature extractor for infer_shape
         if not hasattr(net, 'features'):
             raise ValueError("Cannot find features in network, it is a Faster-RCNN network?")
         self._feat_sym = net.features(mx.sym.var(name='data'))
-        from ....model_zoo.rcnn.rpn.rpn_target import RPNTargetGenerator
-        self._target_generator = RPNTargetGenerator(
-            num_sample=num_sample, pos_iou_thresh=pos_iou_thresh,
-            neg_iou_thresh=neg_iou_thresh, pos_ratio=pos_ratio,
-            stds=box_norm, **kwargs)
+
+    @property
+    def _target_generator(self):
+        if self._internal_target_generator is None:
+            if self._net_none:
+                return None
+            from ....model_zoo.rcnn.rpn.rpn_target import RPNTargetGenerator
+            self._internal_target_generator = RPNTargetGenerator(
+                num_sample=self._num_sample, pos_iou_thresh=self._pos_iou_thresh,
+                neg_iou_thresh=self._neg_iou_thresh, pos_ratio=self._pos_ratio,
+                stds=self._box_norm, **self._kwargs)
+            return self._internal_target_generator
+        else:
+            return self._internal_target_generator
 
     def __call__(self, src, label):
         """Apply transform to training image/label."""
@@ -331,10 +353,19 @@ class MaskRCNNDefaultTrainTransform(object):
         self._max_size = max_size
         self._mean = mean
         self._std = std
+        self._box_norm = box_norm
         self._anchors = None
         self._multi_stage = multi_stage
         self._random_resize = isinstance(self._short, (tuple, list))
+        self._num_sample = num_sample
+        self._pos_iou_thresh = pos_iou_thresh
+        self._neg_iou_thresh = neg_iou_thresh
+        self._pos_ratio = pos_ratio
+        self._internal_target_generator = None
+        self._net_none = False
+        self._kwargs = kwargs
         if net is None:
+            self._net_none = True
             return
 
         # use fake data to generate fixed anchors for target generation
@@ -355,11 +386,20 @@ class MaskRCNNDefaultTrainTransform(object):
         if not hasattr(net, 'features'):
             raise ValueError("Cannot find features in network, it is a Mask RCNN network?")
         self._feat_sym = net.features(mx.sym.var(name='data'))
-        from ....model_zoo.rcnn.rpn.rpn_target import RPNTargetGenerator
-        self._target_generator = RPNTargetGenerator(
-            num_sample=num_sample, pos_iou_thresh=pos_iou_thresh,
-            neg_iou_thresh=neg_iou_thresh, pos_ratio=pos_ratio,
-            stds=box_norm, **kwargs)
+
+    @property
+    def _target_generator(self):
+        if self._internal_target_generator is None:
+            if self._net_none:
+                return None
+            from ....model_zoo.rcnn.rpn.rpn_target import RPNTargetGenerator
+            self._internal_target_generator = RPNTargetGenerator(
+                num_sample=self._num_sample, pos_iou_thresh=self._pos_iou_thresh,
+                neg_iou_thresh=self._neg_iou_thresh, pos_ratio=self._pos_ratio,
+                stds=self._box_norm, **self._kwargs)
+            return self._internal_target_generator
+        else:
+            return self._internal_target_generator
 
     def __call__(self, src, label, segm):
         """Apply transform to training image/label."""

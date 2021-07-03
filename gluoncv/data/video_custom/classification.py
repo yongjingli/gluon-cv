@@ -71,7 +71,7 @@ class VideoClsCustom(dataset.Dataset):
     fast_temporal_stride : int, default 2.
         The temporal stride for sparse sampling of video frames in fast branch of a SlowFast network.
     data_aug : str, default 'v1'.
-        Different types of data augmentation pipelines. Supports v1, v2, v3 and v4.
+        Different types of data augmentation auto. Supports v1, v2, v3 and v4.
     lazy_init : bool, default False.
         If set to True, build a dataset instance without loading any dataset.
     """
@@ -163,9 +163,9 @@ class VideoClsCustom(dataset.Dataset):
                 video_name = '{}.{}'.format(directory, self.video_ext)
             if self.use_decord:
                 if self.data_aug == 'v1':
-                    decord_vr = self.decord.VideoReader(video_name, width=self.new_width, height=self.new_height)
+                    decord_vr = self.decord.VideoReader(video_name, width=self.new_width, height=self.new_height, num_threads=1)
                 else:
-                    decord_vr = self.decord.VideoReader(video_name)
+                    decord_vr = self.decord.VideoReader(video_name, num_threads=1)
                 duration = len(decord_vr)
             else:
                 mmcv_vr = self.mmcv.VideoReader(video_name)

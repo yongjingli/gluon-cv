@@ -11,8 +11,9 @@ from ...nn.feature import FeatureExpander
 from .anchor import SSDAnchorGenerator
 from ...nn.predictor import ConvPredictor
 from ...nn.coder import MultiPerClassDecoder, NormalizedBoxCenterDecoder
+from .vgg_atrous import vgg16_atrous_300, vgg16_atrous_512
 
-__all__ = ['SSD', 'get_ssd']
+__all__ = ['SSD', 'get_ssd', 'custom_ssd']
 
 
 class SSD(HybridBlock):
@@ -118,7 +119,7 @@ class SSD(HybridBlock):
             num_layers = len(features) + len(num_filters) + int(global_pool)
         assert len(sizes) == num_layers + 1
         sizes = list(zip(sizes[:-1], sizes[1:]))
-        assert isinstance(ratios, list), "Must provide ratios as list or list of list"
+        assert isinstance(ratios, (tuple, list)), "Must provide ratios as tuple or list"
         if not isinstance(ratios[0], (tuple, list)):
             ratios = ratios * num_layers  # propagate to all layers if use same ratio
         assert num_layers == len(sizes) == len(ratios), \
@@ -418,4 +419,43 @@ def get_ssd(name, base_size, features, filters, sizes, ratios, steps, classes,
         from ..model_store import get_model_file
         full_name = '_'.join(('ssd', str(base_size), name, dataset))
         net.load_parameters(get_model_file(full_name, tag=pretrained, root=root), ctx=ctx)
+    return net
+
+def custom_ssd(base_network_name, base_size, filters, sizes, ratios, steps,
+               classes, dataset, pretrained_base, **kwargs):
+    """Custom SSD models.
+    """
+    if base_network_name == 'vgg16_atrous' and base_size == 300:
+        features = vgg16_atrous_300
+    elif base_network_name == 'vgg16_atrous' and base_size == 512:
+        features = vgg16_atrous_512
+    elif base_network_name == 'resnet18_v1' and base_size == 512:
+        features = ['stage3_activation1', 'stage4_activation1']
+    elif base_network_name == 'resnet50_v1' and base_size == 512:
+        features = ['stage3_activation5', 'stage4_activation2']
+    elif base_network_name == 'resnet101_v2' and base_size == 512:
+        features = ['stage3_activation22', 'stage4_activation2']
+    elif base_network_name == 'resnet152_v2' and base_size == 512:
+        features = ['stage2_activation7', 'stage3_activation35', 'stage4_activation2']
+    elif base_network_name == 'mobilenet1.0' and base_size == 512:
+        features = ['relu22_fwd', 'relu26_fwd']
+    elif base_network_name == 'mobilenet1.0' and base_size == 300:
+        features = ['relu22_fwd', 'relu26_fwd']
+    elif base_network_name == 'mobilenet0.25' and base_size == 300:
+        features = ['relu22_fwd', 'relu26_fwd']
+    else:
+        raise NotImplementedError('Unsupported network', base_network_name)
+
+    net = get_ssd(name=base_network_name,
+                  base_size=base_size,
+                  features=features,
+                  filters=filters,
+                  sizes=sizes,
+                  ratios=ratios,
+                  steps=steps,
+                  classes=classes,
+                  dataset=dataset,
+                  pretrained_base=pretrained_base,
+                  **kwargs)
+
     return net

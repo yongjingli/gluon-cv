@@ -1,7 +1,6 @@
 """Data parallel task for Faster RCNN Model."""
 
 from mxnet import autograd
-from mxnet.contrib import amp
 
 from gluoncv.utils.parallel import Parallelizable
 
@@ -22,7 +21,7 @@ class ForwardBackwardTask(Parallelizable):
         R-CNN box head classification loss.
     rcnn_box_loss : gluon.loss
         R-CNN box head regression loss.
-    mix_ratio : int
+    mix_ratio : float
         Object detection mixup ratio.
     amp_enabled : bool
         Whether to enable Automatic Mixed Precision.
@@ -32,6 +31,8 @@ class ForwardBackwardTask(Parallelizable):
                  mix_ratio, amp_enabled):
         super(ForwardBackwardTask, self).__init__()
         self.net = net
+        ctx = list(net.collect_params().values())[0].list_ctx()
+        self.net.target_generator.collect_params().reset_ctx(ctx)
         self._optimizer = optimizer
         self.rpn_cls_loss = rpn_cls_loss
         self.rpn_box_loss = rpn_box_loss
@@ -77,6 +78,7 @@ class ForwardBackwardTask(Parallelizable):
             rcnn_l1_loss_metric = [[box_targets, box_masks], [box_pred]]
 
             if self.amp_enabled:
+                from mxnet.contrib import amp
                 with amp.scale_loss(total_loss, self._optimizer) as scaled_losses:
                     autograd.backward(scaled_losses)
             else:

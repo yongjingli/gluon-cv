@@ -1,4 +1,4 @@
-# pylint: disable=wildcard-import, unused-wildcard-import
+# pylint: disable=wildcard-import, unused-wildcard-import, line-too-long
 """Model store which handles pretrained models from both
 mxnet.gluon.model_zoo.vision and gluoncv.models
 """
@@ -42,6 +42,7 @@ from .siamrpn import *
 from .icnet import *
 from .fastscnn import *
 from .danet import *
+from .monodepthv2 import *
 
 __all__ = ['get_model', 'get_model_list']
 
@@ -127,6 +128,9 @@ _models = {
     'ssd_300_mobilenet0.25_voc': ssd_300_mobilenet0_25_voc,
     'ssd_300_mobilenet0.25_coco': ssd_300_mobilenet0_25_coco,
     'ssd_300_mobilenet0.25_custom': ssd_300_mobilenet0_25_custom,
+    'ssd_300_resnet34_v1b_voc': ssd_300_resnet34_v1b_voc,
+    'ssd_300_resnet34_v1b_coco': ssd_300_resnet34_v1b_coco,
+    'ssd_300_resnet34_v1b_custom': ssd_300_resnet34_v1b_custom,
     'faster_rcnn_resnet50_v1b_voc': faster_rcnn_resnet50_v1b_voc,
     'mask_rcnn_resnet18_v1b_coco': mask_rcnn_resnet18_v1b_coco,
     'faster_rcnn_resnet50_v1b_coco': faster_rcnn_resnet50_v1b_coco,
@@ -211,7 +215,7 @@ _models = {
     'resnext50_32x4d': resnext50_32x4d,
     'resnext101_32x4d': resnext101_32x4d,
     'resnext101_64x4d': resnext101_64x4d,
-    'resnext101b_64x4d': resnext101e_64x4d,
+    'resnext101e_64x4d': resnext101e_64x4d,
     'se_resnext50_32x4d': se_resnext50_32x4d,
     'se_resnext101_32x4d': se_resnext101_32x4d,
     'se_resnext101_64x4d': se_resnext101_64x4d,
@@ -315,6 +319,7 @@ _models = {
     'resnet50_v1b_ucf101': resnet50_v1b_ucf101,
     'resnet50_v1b_hmdb51': resnet50_v1b_hmdb51,
     'resnet50_v1b_custom': resnet50_v1b_custom,
+    'resnet18_v1b_custom': resnet18_v1b_custom,
     'fcn_resnet101_voc_int8': fcn_resnet101_voc_int8,
     'fcn_resnet101_coco_int8': fcn_resnet101_coco_int8,
     'psp_resnet101_voc_int8': psp_resnet101_voc_int8,
@@ -365,6 +370,12 @@ _models = {
     'hrnet_w18_small_v2_s' : hrnet_w18_small_v2_s,
     'hrnet_w48_s' : hrnet_w48_s,
     'siamrpn_alexnet_v2_otb15': siamrpn_alexnet_v2_otb15,
+    'monodepth2_resnet18_kitti_stereo_640x192': get_monodepth2_resnet18_kitti_stereo_640x192,
+    'monodepth2_resnet18_kitti_mono_640x192': get_monodepth2_resnet18_kitti_mono_640x192,
+    'monodepth2_resnet18_kitti_mono_stereo_640x192': get_monodepth2_resnet18_kitti_mono_stereo_640x192,
+    'monodepth2_resnet18_posenet_kitti_mono_640x192': get_monodepth2_resnet18_posenet_kitti_mono_640x192,
+    'monodepth2_resnet18_posenet_kitti_mono_stereo_640x192': get_monodepth2_resnet18_posenet_kitti_mono_stereo_640x192,
+    'i3d_slow_resnet101_f16s4_kinetics700': i3d_slow_resnet101_f16s4_kinetics700
 }
 
 

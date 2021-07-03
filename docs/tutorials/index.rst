@@ -1,4 +1,4 @@
-Tutorials
+MXNet Tutorials
 =========
 
 Interested in getting started in a new CV area? Here are some tutorials to help get started.
@@ -101,6 +101,10 @@ Object Detection
     .. card::
         :title: Skip Finetuning by reusing part of pre-trained model
         :link: ../build/examples_detection/skip_fintune.html
+
+    .. card::
+        :title: Object Detection on NVIDIA Jetson module
+        :link: ../build/examples_detection/demo_jetson.html
 
 
 Instance Segmentation
@@ -272,7 +276,50 @@ Object Tracking
         :title: Pre-trained Siam RPN Models
         :link: ../build/examples_tracking/demo_SiamRPN.html
 
-        Estimate Single Object Tracking in real-world video with pre-trained Object Tracking models
+        Estimate Single Object Tracking in real-world video with pre-trained Object Tracking models.
+
+    .. card::
+        :title: Dive Deep into Training SiamRPN Models
+        :link: ../build/examples_tracking/train_siamrpn.html
+
+        SiamRPN training on VID、DET、COCO、Youtube_bb and test on Otb2015
+
+    .. card::
+        :title: Pre-trained SMOT Models
+        :link: ../build/examples_tracking/demo_smot.html
+
+        Perform Multi-Object Tracking in real-world video with pre-trained SMOT models.
+
+
+Depth Prediction
+---------------------
+
+.. container:: cards
+
+    .. card::
+        :title: Pre-trained Monodepth2 Models
+        :link: ../build/examples_depth/demo_monodepth2.html
+
+        Predict depth from a single image using Monodepth2.
+
+    .. card::
+        :title: Pre-trained Monodepth2 Models
+        :link: ../build/examples_depth/videos_monodepth2.html
+
+        Predict depth from an image sequence or a video using Monodepth2.
+
+    .. card::
+        :title: Dive Deep into Training Monodepth2 Models
+        :link: ../build/examples_depth/train_monodepth2.html
+
+        Monodepth2 training on KITTI dataset.
+
+    .. card::
+        :title: Dive Deep into Testing Pretrained PoseNet Models
+        :link: ../build/examples_depth/test_monodepth2_posenet.html
+
+        Monodepth2 PoseNet testing on KITTI dataset.
+
 
 Dataset Preparation
 -------------------
@@ -327,6 +374,23 @@ Dataset Preparation
         :title: Prepare Multi-Human Parsing V1 Dataset
         :link: ../build/examples_datasets/mhp_v1.html
 
+Auto Module
+-----------
+
+.. container:: cards
+
+    .. card::
+        :title: Example of loading web data into gluoncv.auto
+        :link: ../build/examples_auto_module/demo_auto_data.html
+
+    .. card::
+        :title: Train image classifier with auto estimator
+        :link: ../build/examples_auto_module/train_image_classifier_basic.html
+
+    .. card::
+        :title: Train Object Detection model with auto module
+        :link: ../build/examples_auto_module/demo_auto_detection.html
+
 Distributed Training
 --------------------
 
@@ -367,6 +431,8 @@ Deployment
     ../build/examples_pose/index
     ../build/examples_action_recognition/index
     ../build/examples_tracking/index
+    ../build/examples_depth/index
     ../build/examples_datasets/index
+    ../build/examples_auto_module/index
     ../build/examples_distributed/index
     ../build/examples_deployment/index

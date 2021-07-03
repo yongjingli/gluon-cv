@@ -3,14 +3,15 @@ import io
 import os
 import re
 import sys
-
-import numpy as np
-
 try:
     from Cython.Build import cythonize
 except ImportError:
     cythonize = None
 from setuptools import setup, find_packages, Extension
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 
 with_cython = False
 if '--with-cython' in sys.argv:
@@ -56,8 +57,27 @@ requirements = [
     'portalocker',
     'Pillow',
     'scipy',
+    #'tensorboardx',
+    #'decord',
+    #'opencv-python',
+    'yacs',
+    'pandas',
+    'pyyaml',
+    'autocfg',
+    #'autogluon.core'
 ]
+
+# do not duplicate opencv module if already compiled from source
+if cv2 is None:
+    requirements.append('opencv-python')
+
+extra_requirements = {
+    'full': ['tensorboardx', 'decord', 'autogluon.core', 'cython', 'pycocotools'],
+    'auto': ['autogluon.core']
+}
+
 if with_cython:
+    import numpy as np
     _NP_INCLUDE_DIRS = np.get_include()
 
     # Extension modules
@@ -76,6 +96,7 @@ if with_cython:
 else:
     ext_modules = []
 
+
 setup(
     # Metadata
     name='gluoncv',
@@ -91,5 +112,6 @@ setup(
     zip_safe=True,
     include_package_data=True,
     install_requires=requirements,
-    ext_modules=ext_modules
+    ext_modules=ext_modules,
+    extras_require=extra_requirements
 )

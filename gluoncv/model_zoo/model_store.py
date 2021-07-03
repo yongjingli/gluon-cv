@@ -1,3 +1,4 @@
+# pylint: disable=wildcard-import, unused-wildcard-import, line-too-long
 """Model store which provides pretrained models."""
 from __future__ import print_function
 
@@ -49,6 +50,7 @@ _model_sha1 = {name: checksum for checksum, name in [
     ('f360b758e856f1074a85abd5fd873ed1d98297c3', 'vgg19_bn'),
     ('4fa2e1ad96b8c8d1ba9e5a43556cd909d70b3985', 'vgg16_atrous'),
     ('0e169fbb64efdee6985c3c175ec4298c4bda0298', 'ssd_300_vgg16_atrous_voc'),
+    ('ade34ff72a2418fac94afe1048bc305b980c83c5', 'ssd_300_resnet34_v1b_coco'),
     ('daf8181b615b480236fcb8474545077891276945', 'ssd_512_vgg16_atrous_voc'),
     ('9c8b225a552614e4284a0f647331bfdc6940eb4a', 'ssd_512_resnet50_v1_voc'),
     ('2cc0f93edf1467f428018cc7261d3246dfa15259', 'ssd_512_resnet101_v2_voc'),
@@ -114,6 +116,7 @@ _model_sha1 = {name: checksum for checksum, name in [
     ('bf1584dfcec12063eff3075ee643e181c0f6d443', 'deeplab_resnet101_ade'),
     ('a8312db6e30a464151580f2bda83479786455724', 'deeplab_resnest50_ade'),
     ('6d05c630fb7acb38615f7f4d360fb90f47b25042', 'deeplab_resnest101_ade'),
+    ('9134a6f7d1399b549d5803d8faed3dfc74efc0d8', 'deeplab_resnest200_ade'),
     ('d45b33dedf4cca13b8147213c5360e30f93685bd', 'deeplab_resnest269_ade'),
     ('09f89cad0e107cb2bffdb1b07706ba31798096f2', 'psp_resnet101_coco'),
     ('2c2f4e1c2b11461b52598a4b2038bccbcfc166eb', 'psp_resnet101_voc'),
@@ -122,10 +125,10 @@ _model_sha1 = {name: checksum for checksum, name in [
     ('d0e8603120ab02118a8973d52a26b8296d1b4078', 'psp_resnet101_citys'),
     ('ef2bb40ad8f8f59f451969b2fabe4e548394e80a', 'deeplab_v3b_plus_wideresnet_citys'),
     ('909742b45d5a3844d6000248aa92fef0ae23a0f0', 'icnet_resnet50_citys'),
-    ('63db8a7938586525256a0bdc6632ed986e4026cf', 'icnet_resnet50_mhpv1'),
+    ('873d381a4bc246c5b9d3660ccf66c2f63d0b4e7c', 'icnet_resnet50_mhpv1'),
     ('cf6a7bb3d55360933de647a8505f7936003902a4', 'deeplab_resnet50_citys'),
     ('eb8477a91efc244c85b364c0736664078aaf0e65', 'deeplab_resnet101_citys'),
-    ('b34e59e3e98e8d99f2609ff53f24629ed287b31c', 'fastscnn_citys'),
+    ('95aad0b699ae17c67caa44b3ead4b23474e98954', 'fastscnn_citys'),
     ('143e1f1c1c1f2d3a3416887e088ebfdd4e1e2345', 'danet_resnet50_citys'),
     ('6ead3d099f7a320846bddb51148c3fe3b5ade5c2', 'danet_resnet101_citys'),
     ('f5ece5ce1422eeca3ce2908004e469ffdf91fd41', 'yolo3_darknet53_voc'),
@@ -220,6 +223,13 @@ _model_sha1 = {name: checksum for checksum, name in [
     ('f782057569a768faa03940d8106f944ffe3c9733', 'center_net_mobilenetv3_small_duc_coco'),
     ('2cab979937586d3f8532d86130030c611ae38d2d', 'center_net_mobilenetv3_large_duc_voc'),
     ('bfc55dfd13ef8e9fd052141a3c42338179f5949d', 'center_net_mobilenetv3_large_duc_coco'),
+    ('83eea4a9dda3323dca4b11c34c2d0c557056d7b5', 'monodepth2_resnet18_kitti_stereo_640x192'),
+    ('c881771d720e321efd85f9e8ce4ef455de9ae9fc', 'monodepth2_resnet18_kitti_mono_640x192'),
+    ('9515c219cf72575636e2168728ebb9f12fe8e4df', 'monodepth2_resnet18_kitti_mono_stereo_640x192'),
+    ('661ee2e1bf824f4f4549b3488c59dec0b0078c38', 'monodepth2_resnet18_posenet_kitti_mono_640x192'),
+    ('c14979bb016ed4f555fa09004ddc7616dd60b8b9', 'monodepth2_resnet18_posenet_kitti_mono_stereo_640x192'),
+    ('299b1d9d8a2bcf7c122acd0d23606af4fdfbe7e1', 'i3d_slow_resnet101_f16s4_kinetics700'),
+    ('d6758fc8cddfaaa8d0f7ff2e21adf5b0180f6b4b', 'smot_ssd_bifpn_mobilenet'),
 ]}
 
 apache_repo_url = 'https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/'
@@ -269,7 +279,7 @@ def get_model_file(name, tag=None, root=os.path.join('~', '.mxnet', 'models')):
         sha1_hash = _model_sha1[name]
 
     if not os.path.exists(root):
-        os.makedirs(root)
+        os.makedirs(root, exist_ok=True)
 
     with portalocker.Lock(lockfile, timeout=int(os.environ.get('GLUON_MODEL_LOCK_TIMEOUT', 300))):
         if os.path.exists(params_path):

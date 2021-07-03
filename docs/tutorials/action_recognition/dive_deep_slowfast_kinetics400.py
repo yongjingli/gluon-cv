@@ -93,7 +93,7 @@ transform_train = transforms.Compose([
 # Batch Size for Each GPU
 per_device_batch_size = 5
 # Number of data loader workers
-num_workers = 2
+num_workers = 0
 # Calculate effective total batch size
 batch_size = per_device_batch_size * num_gpus
 
@@ -155,10 +155,10 @@ train_history = TrainingHistory(['training-acc'])
 # Following is the script.
 #
 # .. note::
-#   In order to finish the tutorial quickly, we only train for 3 epochs on a tiny subset of Kinetics400,
+#   In order to finish the tutorial quickly, we only train for 0 epoch on a tiny subset of Kinetics400,
 #   and 100 iterations per epoch. In your experiments, we recommend setting ``epochs=100`` for the full Kinetics400 dataset.
 
-epochs = 3
+epochs = 0
 
 for epoch in range(epochs):
     tic = time.time()
